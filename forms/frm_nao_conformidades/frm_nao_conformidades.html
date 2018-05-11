@@ -1,0 +1,426 @@
+<!-- 
+ * Solicitação de Abertura de Não Conformidade.
+ * Autor: Roberto Alves.
+ * Email: roberto@conenge-sc.com.br
+ -->
+<html>
+	<head>
+		<link type="text/css" rel="stylesheet" href="/portal/resources/style-guide/css/fluig-style-guide.min.css"/>
+		<script type="text/javascript" src="/portal/resources/js/jquery/jquery.js"></script>
+		<script type="text/javascript" src="/portal/resources/js/jquery/jquery-ui.min.js"></script>
+		<script type="text/javascript" src="/portal/resources/js/mustache/mustache-min.js"></script>
+		<script type="text/javascript" src="/portal/resources/style-guide/js/fluig-style-guide.min.js" charset="utf-8"></script>
+		<!-- Custom -->
+		<script src="/webdesk/vcXMLRPC.js"></script>
+	</head>
+	<style>
+		.required:after {
+		 	content:" *"; 
+		 	color: red;
+		}
+	</style>
+	<body onload="comportamentoVisibilidade(); comportamentoTrocaValor();">
+		<div class="fluig-style-guide">
+			<form name="form_nao_conformidade" id="form_nao_conformidade" role="form">
+				<!-- Inicio do corpo do form -->
+				<div class="panel-group">
+				
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">INFORMAÇÕES DO FORMULÁRIO</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div id="div_usuario_logado" class="form-group col-md-4 col-xs-12">
+									<label for="nome_usuario_logado">Usuário Logado</label>
+									<input type="text" id="nome_usuario_logado" name="nome_usuario_logado" class="form-control">
+								</div>
+								<div id="num_id" class="form-group col-md-4 col-xs-12">
+									<label for="num_id">Número da Não Conformidade</label>
+									<input type="text" id="num_id" name="num_id" class="form-control">
+								</div>
+								
+								<div id="div_dt_criacao_form" class="form-group col-md-4 col-xs-12">
+									<label for="dt_criacao_form">Data de Criação</label>
+									<input type="text" id="dt_criacao_form" name="dt_criacao_form" class="form-control">
+								</div>
+							</div>
+							<div class="row" style="display:none;">
+								<div id="div_cod_estado" class="form-group col-md-4 col-xs-12">
+									<label for="cod_estado">Número da Atividade</label>
+									<input type="text" id="cod_estado" name="cod_estado" class="form-control">
+								</div>
+								
+								<div id="div_versao_processo" class="form-group col-md-4 col-xs-12">
+									<label for="versao_processo">Versão do Processo</label>
+									<input type="text" id="versao_processo" name="versao_processo" class="form-control">
+								</div>
+								<div id="div_proxima_atividade_processo" class="form-group col-md-4 col-xs-12">
+									<label for="proxima_atividade_processo">Próxima Atividade do Processo</label>
+									<input type="text" id="proxima_atividade_processo" name="proxima_atividade_processo" class="form-control">
+								</div>
+								
+							</div>
+							<div class="row">
+								<div id="div_codigo_registro_form" class="form-group col-md-4 col-xs-12">
+									<label for="codigo_registro_form">Número Registro do Formulário</label>
+									<input type="text" id="codigo_registro_form" name="codigo_registro_form" class="form-control">
+								</div>
+								<div id="div_num_solicitacao" class="form-group col-md-4 col-xs-12">
+									<label for="num_solicitacao">Número da Solicitação</label>
+									<input type="text" id="num_solicitacao" name="num_solicitacao" class="form-control">
+								</div>							
+								
+							</div>
+						</div>
+					</div>
+					<!-- Inicio Cadastro da Não Conformidade -->
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">CADASTRO</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-md-6 col-xs-12">
+									<label for="select_tipo_nao_conf" class="required">Tipo da Não Conformidade</label>
+									<select id="select_tipo_nao_conf" title="Tipo de Não Conformidade" name="select_tipo_nao_conf" class="form-control">
+										<option value="Selecione">Selecione</option>
+										<option value="corretiva">Ação Corretiva</option>
+										<option value="risco">Avaliação de Risco</option>
+										<option value="oportunidade">Oportunidade de Melhoria</option>
+									</select>
+								</div>
+								<div class="form-group col-md-6 col-xs-12">
+									<label for="select_origem_nao_conf" class="required">Origem da Não Conformidade</label>
+									<select id="select_origem_nao_conf" title="Tipo de Não Conformidade" name="select_origem_nao_conf" class="form-control">
+										<option value="Selecione">Selecione</option>
+										<option value="produto">Produto/Serviço</option>
+										<option value="analiseCritica">Analise Crítica do Sistema</option>
+										<option value="meioAmbiente">Meio Ambiente</option>
+										<option value="cliente">Reclamação de Clientes</option>
+										<option value="auditoria">Auditoria</option>
+										<option value="sso">SSO</option>
+									</select>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="obs_desc_nao_conf" class="required">Descrição da Não Conformidade</label>
+									<textarea class="form-control" title="Descrição da Não Conformidade" rows="5" id="obs_desc_nao_conf" name="obs_desc_nao_conf" placeholder="Descreva de maneira clara e objetiva a Não Conformidade encontrada"></textarea>
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-4 col-xs-12">
+									<label for="select_resp_aber_nao_conf" class="required">Responsável pela Abertura da NC</label>
+									<select id="select_resp_aber_nao_conf" title="Tipo de Não Conformidade" name="select_resp_aber_nao_conf" class="form-control" onChange="comportamentoVisibilidade();">
+										<option value="Selecione">Selecione</option>
+										<option value="proprio">O Próprio</option>
+										<option value="outro">Outro Colaborador</option>
+									</select>									
+								</div>
+								<div class="form-group col-md-8 col-xs-12" id="div_outro_resp_aber_nao_conf" style="display:none;">
+									<label for="select_outro_resp_aber">Nome do Responsável pela Abertura da NC</label>
+									<select id="select_outro_resp_aber" 
+											name="select_outro_resp_aber"
+											title="Nome do Responsável pela abertura da NC"
+											dataset="ds_lista_pessoas_conenge_sede" 
+											datasetkey="NOME" 
+											datasetvalue="NOME"
+											class="form-control">
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Fim Cadastro da Não Conformidade -->
+					<!-- Inicio Informações da Ação -->
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">INFORMAÇÕES DA AÇÃO</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-xs-12">
+								<label for="txt_caminho_rede" class="required">Caminho na Rede Para Evidências</label>
+									<input class="form-control" type="text" name="txt_caminho_rede" id="txt_caminho_rede" placeholder="Ex.:\\servidor\GoogleDrive\SEDE\NaoConformidades\NC01">
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-6 col-xs-12">
+									<label for="select_acao_imediata" class="required">Ação Imediata Necessária</label>
+									<select id="select_acao_imediata" name="select_acao_imediata" class="form-control" onChange="comportamentoVisibilidade();">
+										<option value="Selecione">Selecione</option>
+										<option value="sim">Sim</option>
+										<option value="nao">Não</option>
+									</select>
+								</div>
+							</div>
+							<div class="row" id="div_resp_acao_imed" style="display:none;">
+								<div class="form-group col-md-6">
+									<label for="select_resp_acao_imed" class="required">Responsável pela Ação</label>
+									<select id="select_resp_acao_imed" 
+											name="select_resp_acao_imed"
+											title="Nome do Responsável pela ação"
+											dataset="ds_lista_pessoas_conenge_sede" 
+											datasetkey="NOME" 
+											datasetvalue="NOME"
+											class="form-control">
+									</select>
+								</div>
+								<div class="form-group col-md-3 col-xs-12">
+									<label for="txt_prazo_acao_imed" class="required">Prazo da Ação</label>	
+									<input class="form-control" id="txt_prazo_acao_imed" name="txt_prazo_acao_imed" type="text" placeholder="Selecione Data Limite" maxlength="20" onclick="formataData(this.value);">				
+								</div>
+								<!-- 
+								<div class="form-group col-md-3">
+									<label for="txt_prazo_acao_imed">Prazo da Ação</label>
+									<input class="form-control" type="date" name="txt_prazo_acao_imed" id="txt_prazo_acao_imed">
+								</div> -->
+								<script>
+									
+								</script>
+								
+								<div class="form-group col-md-3">
+									<label for="txt_custo_acao_imed" class="required">Custo Estimado da Ação em R$</label>
+									<input class="form-control" type="text" name="txt_custo_acao_imed" id="txt_custo_acao_imed" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl">
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- Fim Informações da Ação -->
+					<!-- Inicio de Análise e Controle de Correção -->
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">ANÁLISE DE CONTROLE E CORREÇÃO</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row" id="div_analise_cont_corr" style="display:none;">
+								<div class="form-group col-md-12">
+									<label for="obs_acao_imediata" class="required">Ação Imediata</label>
+									<textarea class="form-control" rows="5" id="obs_acao_imediata" name="obs_acao_imediata" placeholder="Descreva a ação imediata tomada para corrigir o problema!">
+									</textarea>
+								</div>
+							</div>
+							
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">ANÁLISE CRÍTICA</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="obs_analise_crit_inic" class="required">Análise Crítica Inicial</label>
+									<textarea class="form-control" rows="5" id="obs_analise_crit_inic" name="obs_analise_crit_inic" placeholder="Descreva aqui a necessidade de ações para eliminar as causas da Não Conformidade. Determine se existem Não Conformidades iguais já registradas. ">
+									</textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">INVESTIGAÇÃO DE CAUSAS</h3>
+						</div>
+						<div class="panel-body">
+							<!-- Inicio tabela de investiação de causas  -->
+							<div class="form-field" data-type="tabledetail" data-show-properties="" data-field-name="table_causas_poten">
+								<div class="form-input">
+									<div class="form-group">
+										<label class="required">TABELA DE CAUSAS</label>
+										<table tablename="table_causas_poten" class="table" noaddbutton="true" customFnDelete="deleteTabCausas(this)">
+											<thead>
+												<tr class="tableHeadRow">
+													<th class="tableColumn col-md-4 col-xs-12">Origem da Causa</th>
+													<th class="tableColumn col-md-6 col-xs-12">Descrição de Causa</th>
+													<th class="tableColumn col-md-2 col-xs-12">Tipo de Causa</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr class="tableBodyRow">
+													<td class="fs-v-align-middle">
+														<select id="select_origem_causa_pot" name="select_origem_causa_pot" class="form-control">
+															<option value="maquina">Máquina/Equipamento</option>
+															<option value="meioAmbiente">Condições Ambientais</option>
+															<option value="insumos">Matéria-Prima/Insumos</option>
+															<option value="colaborador">Colaboradores</option>
+															<option value="procedimento">Métodos/Procedimentos</option>
+															<option value="instrumentos">Medição/Instrumentos</option>
+														</select>
+													</td>
+													<td class="fs-v-align-middle">
+														<input class="form-control" id="txt_desc_causa_pot" name="txt_desc_causa_pot" type="text" placeholder="Descreva de maneira clara e objetiva a causa apontada">
+													</td>
+													<td class="fs-v-align-middle">
+														<select id="select_tipo_causa_pot" name="select_tipo_causa_pot" class="form-control">
+															<option value="Selecione">Selecione</option>
+															<option value="potencial">Causa Potencial</option>
+															<option value="raiz">Causa Raiz</option>
+														</select>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+										<button type="button" class="btn btn-primary" name="btn_causas_poten" id="btn_causas_poten" onclick="wdkAddChild('table_causas_poten')">Novo Registro</button>
+									</div>
+								</div>
+							</div>
+							<!-- Fim tabela de investiação de causas -->
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">DETERMINAR CAUSA RAIZ</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-md-12">
+									<label for="obs_causa_raiz">Descrição de Causa Raiz</label>
+									<textarea class="form-control" rows="5" id="obs_causa_raiz" name="obs_causa_raiz" placeholder="">
+									</textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">AÇÃO CORRETIVA</h3>
+						</div>
+						<div class="panel-body">
+							<!-- Inicio tabela plano de ação -->
+							<div class="form-field" data-type="tabledetail" data-show-properties="" data-field-name="table_plano_acao">
+								<div class="form-input">
+									<div class="form-group">
+										<label class="required">PLANO DE AÇÃO</label>
+										<table tablename="table_plano_acao" class="table" noaddbutton="true" customFnDelete="deleteTabPlanoAcao(this)">
+											<thead>
+												<tr class="tableHeadRow">
+													<th class="tableColumn col-md-5 col-xs-12">Ação</th>
+													<th class="tableColumn col-md-3 col-xs-12">Responsável</th>
+													<th class="tableColumn col-md-2 col-xs-12">Prazo</th>
+													<th class="tableColumn col-md-2 col-xs-12">Custo Estimado em R$</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr class="tableBodyRow">
+													<td class="fs-v-align-middle">
+														<div class="form-input">
+															<input type="text" name="txt_acao_plan_acao" id="txt_acao_plan_acao" class="form-control" placeholder="Descreva de maneira objetiva a ação a ser tomada">
+														</div>
+													</td>
+													<td class="fs-v-align-middle">
+														<select id="select_resp_plan_acao" 
+																name="select_resp_plan_acao"
+																title="Modalidade da Oportunidade"
+																dataset="ds_lista_pessoas_conenge_sede" 
+																datasetkey="NOME" 
+																datasetvalue="NOME"
+																class="form-control">
+														</select>
+													</td>
+													
+													<td class="fs-v-align-middle">
+														<div class="form-input">
+															<input class="form-control" id="dt_prazo_plan_acao" name="dt_prazo_plan_acao" type="text" placeholder="Selecione Data Limite" maxlength="20" onclick="formataData(this.value);">				
+														</div>
+														<!-- 
+														<div class="form-input">
+															<input class="form-control" id="dt_prazo_plan_acao" name="dt_prazo_plan_acao" type="date">
+														</div> -->
+													</td>
+													<td class="fs-v-align-middle">
+														<div class="form-input">
+															<input type="text" name="txt_custo_plan_acao" id="txt_custo_plan_acao" class="form-control" onKeyUp="maskIt(this,event,'###.###.###,##',true)" dir="rtl">
+														</div>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+										<button type="button" class="btn btn-primary" name="btn_plano_acao" id="btn_plano_acao" onclick="wdkAddChild('table_plano_acao')">Novo Registro</button>
+									</div>
+								</div>
+							</div>	
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">AVALIAÇÃO DA EFICÁCIA DAS AÇÕES</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-md-4 col-xs-12">
+									<label for="select_acao_eficaz" class="required">Ações Foram Eficazes</label>
+									<select id="select_acao_eficaz" name="select_acao_eficaz" class="form-control">
+										<option value="Selecione">Selecione</option>
+										<option value="sim">Sim</option>
+										<option value="nao">Não</option>
+									</select>
+								</div>
+								<div class="form-group col-md-8 col-xs-12">
+									<label for="obs_avaliacao_acao">Observações do Avaliador</label>
+									<textarea class="form-control" rows="5" id="obs_avaliacao_acao" name="obs_avaliacao_acao" placeholder="">
+									</textarea>	
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					<div class="panel panel-info">
+						<div class="panel-heading">
+							<h3 class="panel-title">ANÁLISE CRÍTICA</h3>
+						</div>
+						<div class="panel-body">
+							<div class="row">
+								<div class="form-group col-md-4 col-xs-12">
+									<label for="select_repete_prob" class="required">Problema se Repetiu</label>
+									<select id="select_repete_prob" name="select_repete_prob" class="form-control">
+										<option value="Selecione">Selecione</option>
+										<option value="sim">Sim</option>
+										<option value="nao">Não</option>
+									</select>
+								</div>
+								<div class="form-group col-md-8 col-xs-12">
+									<label for="obs_analise_critica">Observação da Analise Crítica</label>
+									<textarea class="form-control" rows="5" id="obs_analise_critica" name="obs_analise_critica" placeholder="">
+									</textarea>	
+								</div>
+							</div>
+							<div class="row">
+								<div class="form-group col-md-4 col-xs-12">
+									<label for="select_doc_altera" class="required">Necessário Alterar Documentos</label>
+									<select id="select_doc_altera" name="select_doc_altera" class="form-control" onChange="comportamentoVisibilidade();">
+										<option value="Selecione">Selecione</option>
+										<option value="sim">Sim</option>
+										<option value="nao">Não</option>
+									</select>
+								</div>
+								<div class="form-group col-md-8 col-xs-12" id="div_altera_documento" style="display:none;">
+									<label for="obs_doc_altera" class="required">Documentos a Serem Alterados</label>
+									<textarea class="form-control" rows="5" id="obs_doc_altera" name="obs_doc_altera" placeholder="Ex.: 1. MSGI - Manual do SGI">
+									</textarea>	
+								</div>
+							</div>
+							<div class="row">	
+								<div class="form-group col-md-12">
+									<label for="obs_relatorio_fim">Relatório de Encerramento</label>
+									<textarea class="form-control" rows="5" id="obs_relatorio_fim" name="obs_relatorio_fim" placeholder="">
+									</textarea>	
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+				<!-- Fim do corpo do form -->	
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript" src="controller.js"></script>
+		<script type="text/javascript" src="view.js"></script>
+	</body>
+</html>
